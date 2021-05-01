@@ -1,0 +1,66 @@
+{
+    "env": {
+        "browser": true,
+		"es6": false,
+        "es2021": false
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+		"wikimedia/client-common",
+		"wikimedia/mediawiki"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 12,
+        "parser": "@typescript-eslint/parser",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+		"quotes": [
+			"error",
+			"double", {
+				"allowTemplateLiterals": true
+			}
+		],
+		"no-console": "off",
+        "no-restricted-syntax": [
+            "error",
+            {
+                "selector": "CallExpression[callee.object.name='console'][callee.property.name!=/^(log|warn|error|info|trace)$/]",
+                "message": "Unexpected property on console object was called"
+            }
+        ],
+		"camelcase": [
+			"error",
+			{
+				"properties": "never",
+				"ignoreDestructuring": true,
+				"allow": [
+					"^_"
+				]
+			}
+		]
+    },
+	"globals": {
+		"$": "readonly"
+	},
+	"settings": {
+		"polyfills": [
+			"URL"
+		]
+	},
+	"overrides": [
+		{
+			"files": [
+				"*.js",
+				"*/*.js"
+			],
+			"rules": {
+				"@typescript-eslint/no-this-alias": 0
+			}
+		}
+	]
+}
