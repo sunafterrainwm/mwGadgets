@@ -10,10 +10,9 @@
 		"wikimedia/client-common",
 		"wikimedia/mediawiki"
     ],
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "ecmaVersion": 12,
-        "parser": "@typescript-eslint/parser",
-        "sourceType": "module"
+        "ecmaVersion": 12
     },
     "plugins": [
         "@typescript-eslint"
@@ -21,30 +20,12 @@
     "rules": {
 		"quotes": [
 			"error",
-			"double", {
-				"allowTemplateLiterals": true
-			}
-		],
-		"no-console": "off",
-        "no-restricted-syntax": [
-            "error",
-            {
-                "selector": "CallExpression[callee.object.name='console'][callee.property.name!=/^(log|warn|error|info|trace)$/]",
-                "message": "Unexpected property on console object was called"
-            }
+            "double"
         ],
-		"camelcase": [
-			"error",
-			{
-				"properties": "never",
-				"ignoreDestructuring": true,
-				"allow": [
-					"^_"
-				]
-			}
-		]
+		"@typescript-eslint/no-var-requires": 0
     },
 	"globals": {
+		"jQuery": "readonly",
 		"$": "readonly"
 	},
 	"settings": {
