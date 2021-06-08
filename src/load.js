@@ -1,16 +1,17 @@
-/* eslint-disable camelcase, jsdoc/no-undefined-types */
+/* eslint-disable jsdoc/no-undefined-types */
 ( function () {
-
-	function Url( uri ) {
-		try {
-			return new URL( uri );
-		} catch ( e ) {
-			if ( uri.startsWith( "//" ) ) {
-				return new URL( window.location.protocol + uri );
-			} else {
-				return new URL( window.location.protocol + "//" + uri );
-			}
-		}
+	if ( !mw.loader.getCSS ) {
+		mw.loader.getCSS = function ( url ) {
+			return $.ajax( url, {
+				dataType: "text",
+				cache: !0
+			} ).done( function ( css ) {
+				mw.util.addCSS( css );
+				return css;
+			} ).catch( function () {
+				throw new Error( "Failed to load script" );
+			} );
+		};
 	}
 
 	/**
@@ -23,7 +24,7 @@
 	function Load( scriptpath, type ) {
 		var defaults = this.defaults = {
 			type: type,
-			scriptpath: Url( scriptpath || mw.config.get( "wgServer" ) )
+			scriptpath: new URL( scriptpath || mw.config.get( "wgServer" ), window.location.origin )
 		};
 
 		if ( defaults.scriptpath.pathname === "/" ) {
@@ -35,13 +36,13 @@
 		/**
 		 * @param {string} title
 		 * @param {string} [scriptpath]
-		 * @param {boolean} [use_getScript]
+		 * @param {Function|{js: Function, css: Function}} [loadcall]
 		 * @return {void|JQuery.jqXHR}
 		 */
-		load: function ( title, scriptpath, use_getScript ) {
+		load: function ( title, scriptpath, loadcall ) {
 			var that = $.extend( {}, this.defaults );
 			if ( scriptpath ) {
-				that.scriptpath = Url( scriptpath );
+				that.scriptpath = new URL( scriptpath, window.location.origin );
 
 				if ( that.scriptpath.pathname === "/" ) {
 					that.scriptpath.pathname = "/w/index.php";
@@ -55,11 +56,17 @@
 				case "application/ecmascript":
 					that.type = "text/javascript";
 					that.msg = "loadjs: $1";
+					if ( loadcall && typeof loadcall !== "function" ) {
+						loadcall = loadcall.js;
+					}
 					break;
 				case "css":
 				case "text/css":
 					that.type = "text/css";
 					that.msg = "loadcss: $1";
+					if ( loadcall && typeof loadcall !== "function" ) {
+						loadcall = loadcall.css;
+					}
 					break;
 				case undefined:
 				case null:
@@ -78,7 +85,7 @@
 					return console.error( "Bad request: unknow type " + that.type );
 			}
 			console.log( that.msg.replace( "$1", that.scriptpath.href + "?title=" + title ) );
-			return mw.loader[ use_getScript ? "getScript" : "load" ](
+			return ( loadcall || mw.loader.load )(
 				that.scriptpath.href + "?title=" + mw.util.wikiUrlencode( title ) + "&action=raw&ctype=" + that.type, that.type
 			);
 		},
@@ -90,7 +97,10 @@
 		 * @return {void}
 		 */
 		add: function ( title, scriptpath ) {
-			this.load( title, scriptpath, true );
+			this.load( title, scriptpath, {
+				js: mw.loader.getScript,
+				css: mw.loader.getCSS
+			} );
 		},
 
 		/**
@@ -123,16 +133,16 @@
 	 * @param {string} [scriptpath]
 	 * @return {void}
 	 */
-	Load.ecm_module = function ( title, scriptpath ) {
-		var scriptpath_uri = new URL( scriptpath );
+	Load.EcmModule = function ( title, scriptpath ) {
+		var scriptpathUrl = new URL( scriptpath, window.location.origin );
 
-		if ( scriptpath_uri.pathname === "/" ) {
-			scriptpath_uri.pathname = "/w/index.php";
+		if ( scriptpathUrl.pathname === "/" ) {
+			scriptpathUrl.pathname = "/w/index.php";
 		}
 
-		console.log( "loadmodule" + scriptpath_uri.href + "?title=" + title );
+		console.log( "loadmodule " + scriptpathUrl.href + "?title=" + title );
 
-		$( "<script src=\"" + title + "\" type=\"module\">" ).appendTo( $( "head" ) );
+		$( "<script src=\"" + scriptpathUrl.href + "?title=" + mw.util.wikiUrlencode( title ) + "&action=raw&ctype=text/javascript\" type=\"module\">" ).appendTo( $( "head" ) );
 	};
 
 	/**
@@ -143,17 +153,25 @@
 		return new Load( scriptpath, "text/javascript" );
 	};
 
+	/**
+	 * @param {string} scriptpath
+	 * @return {Load}
+	 */
 	Load.css = function ( scriptpath ) {
 		return new Load( scriptpath, "text/css" );
 	};
 
 	window.load = Load;
 
-	window.loadjs = function ( title, scriptpath ) {
+	var loadjs = window.loadjs = function ( title, scriptpath ) {
 		return new Load( scriptpath, "text/javascript" ).add( title );
 	};
 
-	window.loadcss = function ( title, scriptpath ) {
+	var loadcss = window.loadcss = function ( title, scriptpath ) {
 		return new Load( scriptpath, "text/css" ).add( title );
+	};
+
+	window.loadjscss = function ( prefix, scriptpath ) {
+		return $.when( loadjs( prefix + ".js", scriptpath ), loadcss( prefix + ".css", scriptpath ) );
 	};
 }() );

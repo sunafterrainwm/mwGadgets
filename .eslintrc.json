@@ -1,37 +1,48 @@
 {
-    "env": {
-        "browser": true,
+	"env": {
+		"browser": true,
 		"es6": false,
-        "es2021": false
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
+		"es2021": false
+	},
+	"extends": [
+		"eslint:recommended",
 		"wikimedia/client-common",
-		"wikimedia/mediawiki"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": 12
-    },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "rules": {
-		"quotes": [
-			"error",
-            "double"
-        ],
-		"@typescript-eslint/no-var-requires": 0
-    },
+		"wikimedia/mediawiki",
+		"plugin:@typescript-eslint/recommended"
+	],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 12
+	},
+	"plugins": [
+		"@typescript-eslint"
+	],
+	"rules": {
+		"quotes": [ "error", "double" ],
+		"@typescript-eslint/no-var-requires": 0,
+		"no-console": 0,
+		"jsdoc/check-tag-names": 0
+	},
 	"globals": {
+		"mediawiki": "readonly",
 		"jQuery": "readonly",
-		"$": "readonly"
+		"$": "readonly",
+		"wgUXS": "readonly",
+		"wgULS": "readonly",
+		"wgUVS": "readonly"
 	},
 	"settings": {
 		"polyfills": [
 			"URL"
-		]
+		],
+		"jsdoc": {
+			"definedTags": [
+				"memberOf"
+			],
+			"preferredTypes": [
+				"JQuery"
+			]
+        }
 	},
 	"overrides": [
 		{
@@ -39,9 +50,31 @@
 				"*.js",
 				"*/*.js"
 			],
+			"extends": [
+				"plugin:es5/no-es2015"
+			],
 			"rules": {
 				"@typescript-eslint/no-this-alias": 0
 			}
+		},
+		{
+			"files": [
+				"*.d.ts",
+				"*/*.d.ts"
+			],
+			"rules": {
+				"max-len": 0,
+				"no-use-before-define": 0,
+				"no-shadow": 0,
+				"spaced-comment": [ "error", "always", {
+					"markers": [ "/" ]
+				} ],
+				"@typescript-eslint/ban-types": 0,
+				"@typescript-eslint/no-explicit-any": 0,
+				"@typescript-eslint/triple-slash-reference": 0,
+				"@typescript-eslint/no-empty-interface": 0
+			}
 		}
 	]
+	
 }

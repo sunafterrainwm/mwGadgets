@@ -9,14 +9,20 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jquery": "^3.5.5",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.25.0",
-    "eslint-config-wikimedia": "^0.20.0"
+    "eslint-config-wikimedia": "^0.20.0",
+    "stylelint": "^13.13.1",
+    "stylelint-config-standard": "^22.0.0"
   },
   "dependencies": {
+    "eslint-plugin-es5": "^1.5.0",
     "eslint-plugin-mediawiki": "^0.2.7",
     "jquery": "^3.6.0",
+    "oojs-ui": "^0.41.3",
+    "stylelint-config-wikimedia": "^0.10.3",
     "types-mediawiki": "^1.1.0"
   }
 }

@@ -1,0 +1,57 @@
+/**
+ * from https://zh.wikipedia.org/wiki/User:JasonHK/Gadget-CodeBlocks-NoWrap.css?oldid=65755202
+ */
+/* stylelint-disable declaration-no-important */
+
+:root {
+	--mw-codeblocks-padding: 1em;
+	--mw-codeblocks-background: #f8f9fa;
+	--mw-codeblocks-linenos-width: 2.75em;
+	--mw-codeblocks-linenos-background: #f0f0f0;
+}
+
+:root .mediawiki.skin-cologneblue {
+	--mw-codeblocks-padding: 0;
+	--mw-codeblocks-background: transparent;
+}
+
+:root .mediawiki.skin-minerva {
+	--mw-codeblocks-background: transparent;
+}
+
+:root .mediawiki.skin-modern {
+	--mw-codeblocks-background: #f0f0f0;
+	--mw-codeblocks-padding: 0.4em;
+}
+
+.mw-highlight pre {
+	position: relative !important;
+	box-shadow: none !important;
+	overflow-x: auto;
+	white-space: pre;
+}
+
+.mediawiki.skin-cologneblue .mw-highlight pre {
+	overflow-y: hidden;
+}
+
+.mw-highlight pre > span:not( .linenos ) {
+	margin-left: calc( var( --mw-codeblocks-padding ) * -1 );
+	margin-right: calc( var( --mw-codeblocks-padding ) * -1 );
+	padding-left: var( --mw-codeblocks-padding );
+	padding-right: var( --mw-codeblocks-padding );
+}
+
+.mw-highlight pre > span:first-child:empty {
+	display: none !important;
+}
+
+.mw-highlight-lines.mw-content-ltr pre,
+.content.mw-content-ltr .mw-highlight-lines pre {
+	background: local linear-gradient( to right, var( --mw-codeblocks-linenos-background ) var( --mw-codeblocks-linenos-width ), var( --mw-codeblocks-background ) var( --mw-codeblocks-linenos-width ) );
+}
+
+.mw-highlight-lines.mw-content-rtl pre,
+.content.mw-content-rtl .mw-highlight-lines pre {
+	background: local linear-gradient( to left, var( --mw-codeblocks-linenos-background ) var( --mw-codeblocks-linenos-width ), var( --mw-codeblocks-background ) var( --mw-codeblocks-linenos-width ) );
+}

@@ -1,0 +1,29 @@
+/* from https://zh.wikipedia.org/wiki/User:Tranve/public/PreviewWithVariant.css?oldid=65921029 */
+
+#pwvPreviewField {
+	display: inline-block;
+	margin-top: 0.5em;
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+#pwvPreviewField .oo-ui-fieldLayout-field {
+	width: min-content;
+}
+
+#pwvPreviewField .oo-ui-buttonElement {
+	margin-top: 0;
+}
+
+#pwvPreviewField .oo-ui-fieldLayout-body {
+	display: flex;
+	align-items: center;
+}
+
+#pwvPreviewField .oo-ui-fieldLayout-header {
+	padding-right: 6px;
+}
+
+.pwv-placeholder {
+	display: none;
+}
