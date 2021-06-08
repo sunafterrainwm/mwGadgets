@@ -161,7 +161,7 @@ $( function () {
 						parser += "<li id=\"confusion-detect-query-" + i + "\">" + title + "</li>";
 					} );
 
-					log( wgULS( "", "正在處理標題......" ), -1 );
+					log( wgULS( "正在处理标题......", "正在處理標題......" ), -1 );
 
 					$.when(
 						Api.parse( "<ul>" + parser + "<ul>", {
@@ -180,7 +180,7 @@ $( function () {
 
 							if ( title !== s && title !== t ) {
 								$ul.find( "#confusion-detect-query-" + i )
-									.append( " <span class=\"confusion-detect-query-warning\">疑似繁簡混雜</span>" );
+									.append( " <span class=\"confusion-detect-query-warning\">" + wgULS( "疑似繁简混杂", "疑似繁簡混雜" ) + "</span>" );
 							} else if ( $( "#confusion-detect-donotshownoconfusion" ).prop( "checked" ) ) {
 								$ul.find( "#confusion-detect-query-" + i ).remove();
 							}
@@ -190,7 +190,7 @@ $( function () {
 							$ul.appendTo( $( "#confusion-detect-query" ) );
 						}
 
-						log( wgULS( "", "完成。" ), 0 );
+						log( wgULS( "完成。", "完成。" ), 0 );
 					} );
 				} );
 			}
