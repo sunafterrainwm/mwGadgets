@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "sunny00217wm",
+  "license": "CC-BY-SA-4.0",
   "devDependencies": {
     "@types/jquery": "^3.5.5",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
