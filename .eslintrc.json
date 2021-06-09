@@ -41,7 +41,8 @@
 			],
 			"preferredTypes": [
 				"JQuery"
-			]
+			],
+			"mode": "typescript"
         }
 	},
 	"overrides": [

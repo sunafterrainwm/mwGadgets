@@ -1,8 +1,11 @@
 /* eslint-disable mediawiki/msg-doc */
-/* from https://zh.wikipedia.org/wiki/User:Tranve/public/PreviewWithVariant.js?oldid=65921026 */
+/* from https://zh.wikipedia.org/wiki/User:Tranve/public/PreviewWithVariant.js?oldid=65985843 */
 // <nowiki>
 
-$.when( mw.loader.using( [ "ext.gadget.site-lib", "ext.gadget.site-lib", "oojs", "oojs-ui", "oojs-ui-core" ] ), $.ready ).done( function () {
+$.when(
+	mw.loader.using( [ "ext.gadget.site-lib", "oojs", "oojs-ui", "oojs-ui-core", "user.options", "mediawiki.jqueryMsg" ] ),
+	$.ready
+).done( function () {
 	if (
 		[ "edit", "submit" ].indexOf( mw.config.get( "wgAction" ) ) === -1 ||
 		mw.config.get( "wgPageContentModel" ) !== "wikitext"
@@ -21,8 +24,13 @@ $.when( mw.loader.using( [ "ext.gadget.site-lib", "ext.gadget.site-lib", "oojs",
 
 	var prefix = "pwv-",
 		messages = {
-			prefix: wgULS( "以", "以" ),
-			"tmplsb-var-label": wgULS( "变体：", "選擇變體：" ),
+			previewwith: wgULS( "预览变体", "預覽變體" ),
+			dropdown: wgULS( "使用该变体显示预览：", "使用該變體顯示預覽：" ),
+			"live-preview-tips": wgULS(
+				"很抱歉，变体预览小工具与即时预览功能不兼容，请在您的[[Special:Preferences#mw-prefsection-editing|参数设置]]中关闭此功能后再试。",
+				"很抱歉，變體預覽小工具與即時預覽功能不兼容，請在您的[[Special:Preferences#mw-prefsection-editing|偏好設定]]中關閉此功能後再試。"
+			),
+			"live-preview-header": wgULS( "变体预览小工具", "變體預覽小工具" ),
 			"var-zh": wgULS( "不转换", "不轉換" ),
 			"var-zh-hans": "简体",
 			"var-zh-hant": "繁體",
@@ -39,15 +47,15 @@ $.when( mw.loader.using( [ "ext.gadget.site-lib", "ext.gadget.site-lib", "oojs",
 	} );
 
 	var VariantTable = [
-		{ var: "zh", htmlLang: "zh", msg: "var-zh", skinVarMenuId: "ca-varlang-0" },
-		{ var: "zh-hans", htmlLang: "zh-Hans", msg: "var-zh-hans", skinVarMenuId: "ca-varlang-1" },
-		{ var: "zh-hant", htmlLang: "zh-Hant", msg: "var-zh-hant", skinVarMenuId: "ca-varlang-2" },
-		{ var: "zh-cn", htmlLang: "zh-Hans-CN", msg: "var-zh-cn", skinVarMenuId: "ca-varlang-3" },
-		{ var: "zh-hk", htmlLang: "zh-Hant-HK", msg: "var-zh-hk", skinVarMenuId: "ca-varlang-4" },
-		{ var: "zh-mo", htmlLang: "zh-Hant-MO", msg: "var-zh-mo", skinVarMenuId: "ca-varlang-5" },
-		{ var: "zh-my", htmlLang: "zh-Hans-MY", msg: "var-zh-my", skinVarMenuId: "ca-varlang-6" },
-		{ var: "zh-sg", htmlLang: "zh-Hans-SG", msg: "var-zh-sg", skinVarMenuId: "ca-varlang-7" },
-		{ var: "zh-tw", htmlLang: "zh-Hant-TW", msg: "var-zh-tw", skinVarMenuId: "ca-varlang-8" }
+		{ var: "zh", msg: "var-zh" },
+		{ var: "zh-hans", msg: "var-zh-hans" },
+		{ var: "zh-hant", msg: "var-zh-hant" },
+		{ var: "zh-cn", msg: "var-zh-cn" },
+		{ var: "zh-hk", msg: "var-zh-hk" },
+		{ var: "zh-mo", msg: "var-zh-mo" },
+		{ var: "zh-my", msg: "var-zh-my" },
+		{ var: "zh-sg", msg: "var-zh-sg" },
+		{ var: "zh-tw", msg: "var-zh-tw" }
 	];
 
 	function createMenus() {
@@ -56,7 +64,7 @@ $.when( mw.loader.using( [ "ext.gadget.site-lib", "ext.gadget.site-lib", "oojs",
 		$.each( VariantTable, function ( _i, item ) {
 			ret.push( new OO.ui.MenuOptionWidget( {
 				data: item.var,
-				label: mw.msg( item.msg )
+				label: mw.msg( prefix + item.msg )
 			} ) );
 		} );
 
@@ -82,96 +90,66 @@ $.when( mw.loader.using( [ "ext.gadget.site-lib", "ext.gadget.site-lib", "oojs",
 		}
 	}
 
+	function getCheckboxState() {
+		return typeof URL === "function" ?
+			new URL( window.location.href ).searchParams.get( "variant" ) :
+			Object.hasOwnProperty.call( new mw.Uri().query, "variant" );
+	}
+
 	function initUI() {
-		var $previewButton, $input, $form, $placeHolder, $tsPage, $tsForm, $tsPreview,
-			previewWidget, dropdown, previewField, pageInput, fieldset, tsDropdown, newPreview;
+		var $layout, $editForm, checkbox, checkboxField, dropdown, dropdownField;
 
-		$previewButton = $( "#wpPreviewWidget" );
-		$input = $previewButton.find( "input" );
-		$form = $( "#editform" );
-		$placeHolder = $( "<span>" ).addClass( "pwv-placeholder" );
+		$layout = $( ".editCheckboxes .oo-ui-horizontalLayout" );
 
-		$placeHolder.insertBefore( $previewButton );
+		if ( !$layout.length ) {
+			return;
+		}
 
-		previewWidget = OO.ui.infuse( $previewButton );
+		if ( mw.user.options.get( "uselivepreview" ) ) {
+			mw.notify(
+				mw.message( prefix + "live-preview-tips" ),
+				{ title: mw.msg( prefix + "live-preview-header" ), type: "error", autoHide: false }
+			);
+			return;
+		}
 
+		$editForm = $( "#editform" );
+		checkbox = new OO.ui.CheckboxInputWidget( {
+			selected: getCheckboxState()
+		} );
+		checkboxField = new OO.ui.FieldLayout( checkbox, {
+			align: "inline",
+			label: mw.msg( prefix + "previewwith" )
+		} );
 		dropdown = new OO.ui.DropdownWidget( {
 			$overlay: true,
+			disabled: !checkbox.isSelected(),
 			menu: {
 				items: createMenus()
 			}
+		} );
+		dropdownField = new OO.ui.FieldLayout( dropdown, {
+			align: "top",
+			label: mw.msg( prefix + "dropdown" ),
+			invisibleLabel: true
 		} );
 
 		dropdown.getMenu().selectItemByData( mw.config.get( "wgUserVariant" ) );
 
-		previewField = new OO.ui.ActionFieldLayout(
-			dropdown,
-			previewWidget,
-			{ align: "left", id: "pwvPreviewField", label: mw.msg( "pwv-prefix" ) }
+		checkbox.on( "change", function ( selected ) {
+			dropdown.setDisabled( !selected );
+		} );
+		$editForm.on(
+			"click",
+			"#wpPreview, input[name=wpTemplateSandboxPage]",
+			function () {
+				if ( checkbox.isSelected() ) {
+					applyVariant( $editForm, dropdown.getMenu().findSelectedItem().getData() );
+				}
+			}
 		);
 
-		previewField.$element.insertAfter( $placeHolder );
-
-		$placeHolder.detach();
-
-		$input.on( "click", function () {
-			applyVariant(
-				$form,
-				dropdown.getMenu().findSelectedItem().getData()
-			);
-		} );
-
-		$tsForm = $( ".mw-templatesandbox-fieldset" );
-
-		if ( !$tsForm.length ) {
-			return;
-		}
-
-		$tsPage = $tsForm.find( "#wpTemplateSandboxPage" );
-		$tsPreview = $tsForm.find( "input[name=wpTemplateSandboxPreview]" );
-		pageInput = OO.ui.infuse( $tsPage );
-		tsDropdown = new OO.ui.DropdownWidget( {
-			$overlay: true,
-			menu: {
-				items: createMenus()
-			}
-		} );
-
-		tsDropdown.getMenu().selectItemByData( mw.config.get( "wgUserVariant" ) );
-
-		newPreview = new OO.ui.ButtonWidget( {
-			label: $tsPreview.attr( "value" ), // "Show preview"
-			flags: [
-				"progressive"
-			]
-		} );
-
-		newPreview.on( "click", function () {
-			applyVariant(
-				$form,
-				tsDropdown.getMenu().findSelectedItem().getData()
-			);
-			$tsPreview.trigger( "click" );
-		} );
-
-		fieldset = new OO.ui.FieldsetLayout( {
-			// "Preview page with this template"
-			label: $tsForm.find( ".oo-ui-labelElement-label" ).text(),
-			items: [
-				new OO.ui.FieldLayout( pageInput, {
-					align: "top"
-				} ),
-				new OO.ui.FieldLayout( tsDropdown, {
-					align: "top",
-					label: mw.msg( "pwv-tmplsb-var-label" )
-				} ),
-				new OO.ui.FieldLayout( newPreview )
-			]
-		} );
-
-		fieldset.$element.insertAfter( $tsForm );
-
-		$tsForm.css( "display", "none" );
+		$layout.append( checkboxField.$element, dropdownField.$element );
 	}
 
 	initUI();

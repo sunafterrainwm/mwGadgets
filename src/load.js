@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/no-undefined-types */
 ( function () {
 	if ( !mw.loader.getCSS ) {
 		mw.loader.getCSS = function ( url ) {
@@ -32,11 +31,17 @@
 		}
 	}
 
+	/* eslint-disable jsdoc/valid-types */
+	/**
+	 * @typedef {(modules: string, type?: string) => JQuery.jqXHR | void} loadcall
+	 */
+	/* eslint-enable jsdoc/valid-types */
+
 	Load.prototype = {
 		/**
 		 * @param {string} title
 		 * @param {string} [scriptpath]
-		 * @param {Function|{js: Function, css: Function}} [loadcall]
+		 * @param {loadcall | {js: loadcall;css: loadcall;}} [loadcall]
 		 * @return {void|JQuery.jqXHR}
 		 */
 		load: function ( title, scriptpath, loadcall ) {
@@ -74,9 +79,15 @@
 					if ( title.match( /\.js$/ ) ) {
 						that.type = "text/javascript";
 						that.msg = "loadjs: $1";
+						if ( loadcall && typeof loadcall !== "function" ) {
+							loadcall = loadcall.js;
+						}
 					} else if ( title.match( /\.css$/ ) ) {
 						that.type = "text/css";
 						that.msg = "loadcss: $1";
+						if ( loadcall && typeof loadcall !== "function" ) {
+							loadcall = loadcall.css;
+						}
 					} else {
 						return console.error( "Bad request: unknow type " + that.type );
 					}

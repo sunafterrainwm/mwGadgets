@@ -33,7 +33,7 @@ declare global {
 
             clone(): mw.Uri;
 
-            extend(parameters: any): mw.Uri;
+            extend( parameters: any ): mw.Uri;
 
             getAuthority(): string;
 
@@ -47,9 +47,9 @@ declare global {
 
             toString(): string;
 
-            static decode(s: string): string;
+            static decode( s: string ): string;
 
-            static encode(s: string): string;
+            static encode( s: string ): string;
         }
     }
 }

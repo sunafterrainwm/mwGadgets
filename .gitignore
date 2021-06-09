@@ -1,3 +1,4 @@
 /node_modules
-/*-common.*
-/*-global.*
+/src/*-common.*
+/src/*-global.*
+*-no-push.*

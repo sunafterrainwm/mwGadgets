@@ -85,7 +85,7 @@ $( function () {
 					log( wgULS( "无法识别的错误：", "無法識別的錯誤：" ) + JSON.stringify( data ), 2 );
 					mw.log.error( "Unrecognized error:", data );
 				}
-				throw new Error();
+				throw new Error( "Throw For Stop" );
 			}
 			var nsid = -3;
 			$.each( data.query.pages, function ( _i, pageinfo ) {
@@ -96,7 +96,7 @@ $( function () {
 
 			if ( nsid < 0 ) {
 				log( wgULS( "错误：输入标题无效", "錯誤：輸入標題無效" ), 2 );
-				throw new Error();
+				throw new Error( "Throw For Stop" );
 			} else if ( nsid > 0 ) {
 				prefix = prefix.replace( /^[^:]+:/, "" );
 			}
@@ -126,13 +126,13 @@ $( function () {
 					if ( !data || !data.query || !data.query.allpages ) {
 						log( wgULS( "无法识别的错误：", "無法識別的錯誤：" ) + JSON.stringify( data ), 2 );
 						mw.log.error( "Unrecognized error:", data );
-						throw new Error();
+						throw new Error( "Throw For Stop" );
 					}
 					$.each( data.query.allpages, function ( _i, allpage ) {
 						list.push( allpage.title );
 					} );
 					if ( data.continue && data.continue.apcontinue ) {
-						query( "apcontinue" );
+						query( data.continue.apcontinue );
 					} else {
 						// eslint-disable-next-line no-use-before-define
 						parsetitles();
@@ -140,7 +140,7 @@ $( function () {
 				} ).catch( function ( err ) {
 					log( wgULS( "错误：", "錯誤：" ) + err, 2 );
 					mw.log.error( "Unrecognized error:", $.makeArray( arguments ) );
-					throw new Error();
+					throw new Error( "Throw For Stop" );
 				} ) );
 			}
 
@@ -195,7 +195,7 @@ $( function () {
 				} );
 			}
 		} ).catch( function ( err ) {
-			if ( !( err instanceof Error ) || err.constructor !== Error ) {
+			if ( !( err instanceof Error ) || err.constructor !== Error && err.message !== "Throw For Stop" ) {
 				log( wgULS( "错误：", "錯誤：" ) + err, 2 );
 				mw.log.error( "Unrecognized error:", $.makeArray( arguments ) );
 			}
