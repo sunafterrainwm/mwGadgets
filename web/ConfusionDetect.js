@@ -8,8 +8,7 @@ $( function () {
 
 	$( "h1#firstHeading" ).text( wgULS( "页面标题繁简混杂检查", "頁面標題繁簡混雜檢查" ) );
 
-	var oldTitle = document.title,
-		wikiTitle = oldTitle.split( "-" );
+	var wikiTitle = document.title.split( "-" );
 
 	document.title = wgULS( "页面标题繁简混杂检查", "頁面標題繁簡混雜檢查" ) +
 		( wikiTitle.length > 1 ? ( " - " + wikiTitle[ wikiTitle.length - 1 ].trim() ) : "" );
@@ -25,7 +24,7 @@ $( function () {
 	$( "#mw-content-text" ).html( "<div id=\"confusion-detect-setting\">" +
 		"<p>" +
 		wgULS(
-			"此小工具能搜索指定标题开头的页面是否繁简混杂，若要搜寻某页的子页面请填入该页的标题并加上<code>/</code>",
+			"此小工具能搜索指定标题开头的页面是否繁简混杂，若要搜寻某页的子页面请填入该页的标题并加上 <code>/</code>",
 			"此小工具能搜索指定標題開頭的頁面是否繁簡混雜，若要搜尋某頁的子頁面請填入該頁的標題並加上 <code>/</code> "
 		) +
 		"</p>" +

@@ -1,13 +1,12 @@
 {
 	"env": {
-		"browser": true,
-		"es6": false,
-		"es2021": false
+		"node": true,
+		"es6": true,
+		"es2021": true
 	},
 	"extends": [
 		"eslint:recommended",
 		"wikimedia/client-common",
-		"wikimedia/mediawiki",
 		"plugin:@typescript-eslint/recommended"
 	],
 	"parser": "@typescript-eslint/parser",
@@ -18,18 +17,13 @@
 		"@typescript-eslint"
 	],
 	"rules": {
-		"quotes": [ "error", "double" ],
-		"@typescript-eslint/no-var-requires": 0,
+		"quotes": [
+			"error",
+			"double"
+		],
 		"no-console": 0,
+		"@typescript-eslint/no-var-requires": 0,
 		"jsdoc/check-tag-names": 0
-	},
-	"globals": {
-		"mediawiki": "readonly",
-		"jQuery": "readonly",
-		"$": "readonly",
-		"wgUXS": "readonly",
-		"wgULS": "readonly",
-		"wgUVS": "readonly"
 	},
 	"settings": {
 		"polyfills": [
@@ -40,18 +34,45 @@
 				"memberOf"
 			],
 			"preferredTypes": [
-				"JQuery"
+				"JQuery",
+				"JQueryStatic"
 			],
 			"mode": "typescript"
-        }
+		}
 	},
 	"overrides": [
 		{
 			"files": [
-				"*.js",
-				"*/*.js"
+				"node/*.js",
+				"node/**/*.js"
 			],
+			"rules": {
+				"compat/compat": 0,
+				"@typescript-eslint/no-this-alias": 0
+			}
+		},
+		{
+			"files": [
+				"web/*.js",
+				"web/**/*.js"
+			],
+			"env": {
+				"node": false,
+				"browser": true,
+				"es6": false,
+				"es2021": false
+			},
+			"globals": {
+				"mediaWiki": "readonly",
+				"jQuery": "readonly",
+				"$": "readonly",
+				"wgUXS": "readonly",
+				"wgULS": "readonly",
+				"wgUVS": "readonly"
+			},
 			"extends": [
+				"wikimedia/mediawiki",
+				"wikimedia/jquery",
 				"plugin:es5/no-es2015"
 			],
 			"rules": {
@@ -67,9 +88,15 @@
 				"max-len": 0,
 				"no-use-before-define": 0,
 				"no-shadow": 0,
-				"spaced-comment": [ "error", "always", {
-					"markers": [ "/" ]
-				} ],
+				"spaced-comment": [
+					"error",
+					"always",
+					{
+						"markers": [
+							"/"
+						]
+					}
+				],
 				"@typescript-eslint/ban-types": 0,
 				"@typescript-eslint/no-explicit-any": 0,
 				"@typescript-eslint/triple-slash-reference": 0,
@@ -77,5 +104,4 @@
 			}
 		}
 	]
-	
 }
